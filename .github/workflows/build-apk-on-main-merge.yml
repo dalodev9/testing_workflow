@@ -10,6 +10,8 @@ jobs:
   build-apk:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout
@@ -32,8 +34,14 @@ jobs:
       - name: Build app-test release APK
         run: flutter build apk --release
 
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
+      - name: Prepare release tag
+        id: release_meta
+        run: echo "tag=app-test-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release and upload APK
+        uses: softprops/action-gh-release@v2
         with:
-          name: app-test-release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          tag_name: ${{ steps.release_meta.outputs.tag }}
+          name: app-test ${{ steps.release_meta.outputs.tag }}
+          prerelease: true
+          files: build/app/outputs/flutter-apk/app-release.apk
