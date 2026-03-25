@@ -6,7 +6,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-  // add this line for testing github workflow
+  // add this line for testing github
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
