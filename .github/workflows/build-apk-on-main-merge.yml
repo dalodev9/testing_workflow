@@ -34,9 +34,12 @@ jobs:
       - name: Build app-test release APK
         run: flutter build apk --release
 
-      - name: Prepare release tag
+      - name: Prepare semantic version tag
         id: release_meta
-        run: echo "tag=app-test-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+        run: |
+          VERSION_LINE=$(grep '^version:' pubspec.yaml | head -n 1 | awk '{print $2}')
+          VERSION=${VERSION_LINE%%+*}
+          echo "tag=v${VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub Release and upload APK
         uses: softprops/action-gh-release@v2
